@@ -1,0 +1,89 @@
+/*
+	//Lucene创建索引
+	@Test
+	public void testAdd() throws Exception{
+		
+		//原始文档,这里使用Mysql数据
+		//获取  Mysql数据
+		BookDao bookDao = new BookDaoImpl();
+		List<Book> books = bookDao.findAllBook();
+		
+		//分析文档
+		// 由于Analyzer是抽象的，所以需要new 实现类，这里new的是标准的
+//		Analyzer analyzer = new StandardAnalyzer();
+		
+		//lucence自带的中文分词器
+//		Analyzer analyzer = new SmartChineseAnalyzer();
+		
+		//第三方中文分词器
+		Analyzer analyzer = new IKAnalyzer();
+		
+		//创建索引到索引库中
+		//由于Directory是抽象的，不能new，所以使用FSDirectory，FS的意思是File System
+		Directory directory = FSDirectory.open(new File("D:\\aa\\temp"));
+		
+		//new IndexWriterConfig()需要两个参数，第一个是lucence的版本，第二个是分析文档对象
+		//Version.LATEST意思是最新的版本,如果jar包中lucence只有一个版本，那就是这个，如果有两个版本，则会使用版本最新的，如果不想使用Version.LATEST，可以Version.要使用的版本
+		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(Version.LATEST, analyzer);
+		
+		//new IndexWriter()需要两个参数，Directory和IndexWriterConfig,所有需要创建
+		IndexWriter indexWriter = new IndexWriter(directory, indexWriterConfig);
+		for (Book book : books) {
+			//创建文档对象
+			Document document = new Document();
+			//将book对象中的各个属性分别放进一个域中，并把域放进文档对象中
+			//Store的意思是在存进文档的时候，这个域要不要存，no就是不存
+			Field idField = new TextField("id", String.valueOf(book.getId()),Store.YES);
+			Field nameField = new TextField("name",book.getName(),Store.YES);
+			Field picField = new TextField("pic",book.getPic(),Store.YES);
+			Field priceField = new TextField("price",String.valueOf(book.getPrice()),Store.YES);
+			Field descField = new TextField("desc",book.getDesc(),Store.YES);
+			
+			document.add(idField);
+			document.add(nameField);
+			document.add(picField);
+			document.add(priceField);
+			document.add(descField);
+			
+			//保存文档到索引库，同时保存索引到索引库
+			indexWriter.addDocument(document);
+		}
+		indexWriter.close();
+	}
+	
+	//搜索索引
+	
+	     1. 创建Query搜索对象
+		 2. 创建Directory流对象,声明索引库位置
+		 3. 创建索引读取对象IndexReader
+		 4. 创建索引搜索对象IndexSearcher
+		 5. 使用索引搜索对象，执行搜索，返回结果集TopDocs
+		 6. 解析结果集
+		 7. 释放资源
+	 
+	@Test
+	public void testSearch() throws Exception{
+		//读取流
+		Directory directory = FSDirectory.open(new File("D:\\aa\\temp"));
+		IndexReader indexReader = DirectoryReader.open(directory);
+		//搜索
+		IndexSearcher indexSearcher = new IndexSearcher(indexReader);
+		//执行搜索
+		Query query = new TermQuery(new Term("name", "java"));
+		//根据Query搜索,返回评分最高(即最热)的n条记录
+		TopDocs topDocs = indexSearcher.search(query, 3);
+		//文档的id
+		ScoreDoc[] scoreDocs = topDocs.scoreDocs;
+		
+		for (ScoreDoc scoreDoc : scoreDocs) {
+			int doc = scoreDoc.doc;
+			Document document = indexSearcher.doc(doc);
+			System.out.println("id："+document.get("id"));
+			System.out.println("name："+document.get("name"));
+			System.out.println("price："+document.get("price"));
+			System.out.println("pic："+document.get("pic"));
+			System.out.println("desc："+document.get("desc"));
+		}
+		//关流
+		indexReader.close();
+	}*/
